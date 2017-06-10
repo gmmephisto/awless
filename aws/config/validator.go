@@ -12,6 +12,7 @@ import (
 )
 
 func ParseRegion(i string) (interface{}, error) {
+	i = strings.TrimSpace(i)
 	if !IsValidRegion(i) {
 		return i, fmt.Errorf("'%s' is not a valid region", i)
 	}
@@ -34,11 +35,12 @@ func StdinRegionSelector() string {
 	fmt.Println("Please choose one region:")
 	var region string
 
-	fmt.Println(strings.Join(allRegions(), ", "))
+	regions := allRegions()
+	fmt.Println(strings.Join(regions, ", "))
 	fmt.Println()
 	fmt.Print("Value ? > ")
 	fmt.Scan(&region)
-	for !IsValidRegion(region) {
+	for !isValidRegion(region, regions) {
 		fmt.Printf("'%s' is not a valid region\n", region)
 		fmt.Print("Value ? > ")
 		fmt.Scan(&region)
@@ -80,11 +82,16 @@ func StdinInstanceTypeSelector() string {
 }
 
 func IsValidRegion(given string) bool {
-	reg, _ := regexp.Compile("^(us|eu|ap|sa|ca)\\-\\w+\\-\\d+$")
-	regChina, _ := regexp.Compile("^cn\\-\\w+\\-\\d+$")
-	regUsGov, _ := regexp.Compile("^us\\-gov\\-\\w+\\-\\d+$")
+	return isValidRegion(given, allRegions())
+}
 
-	return reg.MatchString(given) || regChina.MatchString(given) || regUsGov.MatchString(given)
+func isValidRegion(given string, regions []string) bool {
+	for _, r := range regions {
+		if given == r {
+			return true
+		}
+	}
+	return false
 }
 
 func isValidInstanceType(given string) bool {
