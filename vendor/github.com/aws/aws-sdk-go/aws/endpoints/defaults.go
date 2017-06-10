@@ -11,6 +11,7 @@ const (
 	AwsPartitionID      = "aws"        // AWS Standard partition.
 	AwsCnPartitionID    = "aws-cn"     // AWS China partition.
 	AwsUsGovPartitionID = "aws-us-gov" // AWS GovCloud (US) partition.
+	CrocPartitionID     = "croc"       // CROC Cloud partition.
 )
 
 // AWS Standard partition's regions.
@@ -39,6 +40,11 @@ const (
 // AWS GovCloud (US) partition's regions.
 const (
 	UsGovWest1RegionID = "us-gov-west-1" // AWS GovCloud (US).
+)
+
+// CROC Cloud partition's regions.
+const (
+	CrocRegionID = "croc" // Main CROC Cloud region.
 )
 
 // Service identifiers
@@ -140,7 +146,7 @@ const (
 )
 
 // DefaultResolver returns an Endpoint resolver that will be able
-// to resolve endpoints for: AWS Standard, AWS China, and AWS GovCloud (US).
+// to resolve endpoints for: AWS Standard, AWS China, AWS GovCloud (US), and CROC Cloud.
 //
 // Casting the return value of this func to a EnumPartitions will
 // allow you to get a list of the partitions in the order the endpoints
@@ -159,6 +165,7 @@ var defaultPartitions = partitions{
 	awsPartition,
 	awscnPartition,
 	awsusgovPartition,
+	crocPartition,
 }
 
 // AwsPartition returns the Resolver for AWS Standard.
@@ -2126,6 +2133,70 @@ var awsusgovPartition = partition{
 
 			Endpoints: endpoints{
 				"us-gov-west-1": endpoint{},
+			},
+		},
+	},
+}
+
+// CrocPartition returns the Resolver for CROC Cloud.
+func CrocPartition() Partition {
+	return crocPartition.Partition()
+}
+
+var crocPartition = partition{
+	ID:   "croc",
+	Name: "CROC Cloud",
+	RegionRegex: regionRegex{
+		Regexp: func() *regexp.Regexp {
+			reg, _ := regexp.Compile("^croc$")
+			return reg
+		}(),
+	},
+	Defaults: endpoint{
+		Protocols:         []string{"https"},
+		SignatureVersions: []string{"v4"},
+	},
+	Regions: regions{
+		"croc": region{
+			Description: "Main CROC Cloud region",
+		},
+	},
+	Services: services{
+		"ec2": service{
+			Defaults: endpoint{
+				Hostname: "api.cloud.{region}.ru",
+			},
+			Endpoints: endpoints{
+				"croc": endpoint{},
+			},
+		},
+		"ec2metadata": service{
+			PartitionEndpoint: "aws-global",
+			IsRegionalized:    boxedFalse,
+
+			Endpoints: endpoints{
+				"aws-global": endpoint{
+					Hostname:  "169.254.169.254/latest",
+					Protocols: []string{"http"},
+				},
+			},
+		},
+		"monitoring": service{
+			Defaults: endpoint{
+				Hostname: "monitoring.cloud.{region}.ru",
+			},
+			Endpoints: endpoints{
+				"croc": endpoint{},
+			},
+		},
+		"s3": service{
+			Defaults: endpoint{
+				Hostname:          "storage.cloud.{region}.ru",
+				Protocols:         []string{"http", "https"},
+				SignatureVersions: []string{"s3"},
+			},
+			Endpoints: endpoints{
+				"croc": endpoint{},
 			},
 		},
 	},

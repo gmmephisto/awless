@@ -99,12 +99,13 @@
 			"versionExact": "v1.8.11"
 		},
 		{
-			"checksumSHA1": "+yCOae0vRONrO27QiITkGWblOKk=",
+			"checksumSHA1": "yDVo155yrasz0vvvpKBNT0F3w6s=",
+			"origin": "github.com/gmmephisto/aws-sdk-go/aws/endpoints",
 			"path": "github.com/aws/aws-sdk-go/aws/endpoints",
-			"revision": "200fde3f632bb9f036ec0b8cb29fbc8588155ea5",
-			"revisionTime": "2017-04-07T21:28:24Z",
-			"version": "v1.8.11",
-			"versionExact": "v1.8.11"
+			"revision": "2d328d093286b9ba15a755c28bd523f0fd5510dd",
+			"revisionTime": "2017-06-10T14:20:44Z",
+			"version": "pr-master-croc-cloud-endpoints",
+			"versionExact": "pr-master-croc-cloud-endpoints"
 		},
 		{
 			"checksumSHA1": "/L6UweKsmfyHTu01qrFD1ijzSbE=",
